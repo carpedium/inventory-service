@@ -3,6 +3,7 @@ package com.oss.inventory.entity;
 import com.oss.inventory.enums.DeviceStatus;
 import com.oss.inventory.enums.DeviceType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,7 +37,6 @@ public class DeviceInstance {
     @Enumerated(EnumType.STRING)
     private DeviceType deviceType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "used_for_id")
-    private UsedOrder usedFor;
+    @Column(name="used_for")
+    private Long usedFor;
 }

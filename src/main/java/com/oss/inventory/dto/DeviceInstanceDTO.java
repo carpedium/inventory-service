@@ -18,5 +18,5 @@ public class DeviceInstanceDTO {
     private DeviceStatus status;
     private DeviceType deviceType;
     private Long usedForId;
-    private String usedForRef;
+   
 }
