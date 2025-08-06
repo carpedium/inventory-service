@@ -28,3 +28,24 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+management:
+  endpoint:
+    heapdump:
+      enabled: true
+    threaddump:
+      enabled: true
+    health:
+      probes:
+        enabled: true  # ✅ Enables liveness and readiness probes
+
+  endpoints:
+    web:
+      exposure:
+        include: health, info, heapdump, threaddump
+
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
