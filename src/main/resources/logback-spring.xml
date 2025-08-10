@@ -1,0 +1,41 @@
+<configuration>
+
+  <!-- Console Appender (for dev use) -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Logstash Appender (for ELK) -->
+  <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <destination>localhost:5044</destination>
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <timestamp>
+          <fieldName>timestamp</fieldName>
+        </timestamp>
+        <pattern>
+          <pattern>
+            {
+              "severity": "%level",
+              "service": "${spring.application.name:-}",
+              "trace": "%X{traceId:-}",
+              "span": "%X{spanId:-}",
+              "pid": "${PID:-}",
+              "thread": "%thread",
+              "class": "%logger",
+              "message": "%message"
+            }
+          </pattern>
+        </pattern>
+      </providers>
+    </encoder>
+  </appender>
+
+  <!-- Root logger writes to both -->	
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOGSTASH"/>
+  </root>
+</configuration>

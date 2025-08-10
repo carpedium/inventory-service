@@ -1,5 +1,12 @@
 server:
   port: 8081
+  tomcat:
+    accesslog:
+      enabled: true
+      pattern: "%h %l %u %t \"%r\" %s %b %D" # Logs latency in ms (%D)
+      prefix: access_log
+      suffix: .log
+      directory: logs
 
 spring:
   application:
@@ -30,22 +37,42 @@ spring:
       path: /h2-console
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus, metrics, threaddump, heapdump
+
   endpoint:
+    health:
+      probes:
+        enabled: true
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
     heapdump:
       enabled: true
     threaddump:
       enabled: true
-    health:
-      probes:
-        enabled: true  # ✅ Enables liveness and readiness probes
-
-  endpoints:
-    web:
-      exposure:
-        include: health, info, heapdump, threaddump
 
   health:
     livenessstate:
       enabled: true
     readinessstate:
       enabled: true
+
+  metrics:
+    enable:
+      all: true
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.web.client.RestTemplate: INFO
+    org.springframework.http.client: INFO
+    io.micrometer: INFO
