@@ -1,36 +1,20 @@
 server:
   port: 8081
-  tomcat:
-    accesslog:
-      enabled: true
-      pattern: "%h %l %u %t \"%r\" %s %b %D" # Logs latency in ms (%D)
-      prefix: access_log
-      suffix: .log
-      directory: logs
 
 spring:
   application:
     name: inventory-service
-
   datasource:
     url: jdbc:h2:mem:inventorydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
-    platform: h2
-
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-
   sql:
     init:
       mode: always
-
   h2:
     console:
       enabled: true
@@ -40,39 +24,31 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info, prometheus, metrics, threaddump, heapdump
-
+        include: health,info,metrics,loggers,threaddump,heapdump,prometheus
   endpoint:
     health:
       probes:
         enabled: true
-    prometheus:
-      enabled: true
-    metrics:
-      enabled: true
-    heapdump:
-      enabled: true
-    threaddump:
-      enabled: true
-
   health:
     livenessstate:
       enabled: true
     readinessstate:
       enabled: true
-
   metrics:
-    enable:
-      all: true
-    export:
-      prometheus:
-        enabled: true
     tags:
       application: ${spring.application.name}
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      # If the app runs on your host and Jaeger runs via Docker on the same machine:
+      endpoint: http://localhost:9411/api/v2/spans
+      # If the app runs in Docker on the same network as Jaeger, change to:
+      # endpoint: http://jaeger:9411/api/v2/spans
 
 logging:
   level:
-    org.springframework.web: INFO
-    org.springframework.web.client.RestTemplate: INFO
-    org.springframework.http.client: INFO
     io.micrometer: INFO
+# No fragile logging.pattern here; your logback-spring.xml already injects trace/span.

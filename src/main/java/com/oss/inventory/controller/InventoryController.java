@@ -1,16 +1,23 @@
 package com.oss.inventory.controller;
 
-import com.oss.inventory.dto.DeviceInstanceDTO;
-import com.oss.inventory.service.InventoryService;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.oss.inventory.dto.DeviceInstanceDTO;
+import com.oss.inventory.service.InventoryService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -47,7 +54,8 @@ public class InventoryController {
 
     @PostMapping("/getsingle")
     public ResponseEntity<DeviceInstanceDTO> findTopByExample(@RequestBody DeviceInstanceDTO example) {
-        log.info("Finding top match for example: {}", example);
+
+    	log.info("Finding top match for example: {}", example);
         DeviceInstanceDTO dto = inventoryService.findByExample(example);
         log.info("Top match found: {}", dto);
         return ResponseEntity.ok(dto);
@@ -74,5 +82,11 @@ public class InventoryController {
         inventoryService.save(deviceDto);
         log.info("Update complete for device ID: {}", deviceDto.getId());
         return ResponseEntity.accepted().build();
+    }
+    
+    @GetMapping("/_probe")
+    public ResponseEntity<String> probe(HttpServletRequest req) {
+    	log.info("traceparent=" + req.getHeader("XX   traceparent  XX"));
+      return ResponseEntity.ok("ok");
     }
 }

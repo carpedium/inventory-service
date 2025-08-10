@@ -1,20 +1,19 @@
 <configuration>
 
-  <!-- Console Appender (for dev use) -->
+  <!-- Console Appender (dev): now with trace/span -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] svc=${spring.application.name:-}
+trace=%X{traceId:-} span=%X{spanId:-} %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
 
-  <!-- Logstash Appender (for ELK) -->
+  <!-- Logstash Appender (unchanged; already emits trace/span JSON) -->
   <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
     <destination>localhost:5044</destination>
     <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
       <providers>
-        <timestamp>
-          <fieldName>timestamp</fieldName>
-        </timestamp>
+        <timestamp><fieldName>timestamp</fieldName></timestamp>
         <pattern>
           <pattern>
             {
@@ -33,7 +32,6 @@
     </encoder>
   </appender>
 
-  <!-- Root logger writes to both -->	
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="LOGSTASH"/>
